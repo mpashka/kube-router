@@ -44,6 +44,7 @@ func SendHeartBeat(channel chan<- *ControllerHeartbeat, controller string) {
 		Component:     controller,
 		LastHeartBeat: time.Now(),
 	}
+	glog.V(3).Infof("Sending heartbeat %s, %s", heartbeat.Component, heartbeat.LastHeartBeat.Format("15:04:05.000000"))
 	channel <- &heartbeat
 }
 
@@ -71,7 +72,7 @@ func (hc *HealthController) Handler(w http.ResponseWriter, req *http.Request) {
 
 //HandleHeartbeat handles received heartbeats on the health channel
 func (hc *HealthController) HandleHeartbeat(beat *ControllerHeartbeat) {
-	glog.V(3).Infof("Received heartbeat from %s", beat.Component)
+	glog.V(3).Infof("Received heartbeat from %s, %s", beat.Component, beat.LastHeartBeat.Format("15:04:05.000000"))
 
 	hc.Status.Lock()
 	defer hc.Status.Unlock()

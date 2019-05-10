@@ -250,6 +250,7 @@ func (nrc *NetworkRoutingController) Run(healthChan chan<- *healthcheck.Controll
 			}
 		}
 
+		glog.V(1).Info("getActiveVIPs")
 		// advertise or withdraw IPs for the services to be reachable via host
 		toAdvertise, toWithdraw, err := nrc.getActiveVIPs()
 		if err != nil {
@@ -492,8 +493,10 @@ func (nrc *NetworkRoutingController) Cleanup() {
 }
 
 func (nrc *NetworkRoutingController) syncNodeIPSets() error {
+	glog.V(2).Info("List nodes...")
 	// Get the current list of the nodes from API server
 	nodes, err := nrc.clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+	glog.V(2).Info("Node list received")
 	if err != nil {
 		return errors.New("Failed to list nodes from API server: " + err.Error())
 	}
