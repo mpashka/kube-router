@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net"
 	"os"
 	"os/exec"
@@ -231,6 +232,9 @@ func (nrc *NetworkRoutingController) Run(healthChan chan<- *healthcheck.Controll
 		defer nrc.bgpServer.Shutdown()
 	}
 
+	cycleId := rand.Int()
+	glog.V(1).Info("Starting loop %d", cycleId)
+
 	// loop forever till notified to stop on stopCh
 	for {
 		var err error
@@ -283,6 +287,7 @@ func (nrc *NetworkRoutingController) Run(healthChan chan<- *healthcheck.Controll
 		}
 
 		if err == nil {
+			glog.V(1).Info("Sending NRC heartbeat %d", cycleId)
 			healthcheck.SendHeartBeat(healthChan, "NRC")
 		} else {
 			glog.Errorf("Error during periodic sync in network routing controller. Error: " + err.Error())

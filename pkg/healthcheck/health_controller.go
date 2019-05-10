@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"net/http"
+	"runtime/debug"
 	"strconv"
 	"sync"
 	"time"
@@ -44,6 +45,7 @@ func SendHeartBeat(channel chan<- *ControllerHeartbeat, controller string) {
 		Component:     controller,
 		LastHeartBeat: time.Now(),
 	}
+	debug.PrintStack()
 	glog.V(3).Infof("Sending heartbeat %s, %s", heartbeat.Component, heartbeat.LastHeartBeat.Format("15:04:05.000000"))
 	channel <- &heartbeat
 }
